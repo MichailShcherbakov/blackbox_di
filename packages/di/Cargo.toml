@@ -1,9 +1,9 @@
 [package]
-name = "cast"
+name = "di"
 version = "0.1.0"
 edition = "2021"
-description = "Trait cast library"
-keywords = [ "blackbox", "blackbox_di", "blackbox_di cast", "traitcast", "upcast", "trait", "cast"]
+description = "Rust dependency injection library"
+keywords = [ "blackbox", "blackbox_di", "dependency-injection", "inversion-of-control", "di", "ioc"]
 repository = "https://github.com/MichailShcherbakov/blackbox_di"
 homepage = "https://github.com/MichailShcherbakov/blackbox_di"
 license = "MIT"
@@ -11,9 +11,8 @@ readme = "README.md"
 authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 
 [dependencies]
-once_cell = "1.17.0"
-linkme = "0.3.7"
+uuid = { version = "1.2.2", features = ["v4", "fast-rng"] }
 
-[dependencies.cast_codegen]
-path = "./packages/cast_codegen"
+[dependencies.cast]
+path = "../cast"
 version = "0.1.0"

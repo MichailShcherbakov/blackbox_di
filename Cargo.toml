@@ -13,4 +13,5 @@ authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 [workspace]
 members = [
   "packages/cast",
+  "packages/di",
 ]
