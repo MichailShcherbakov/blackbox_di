@@ -10,4 +10,7 @@ license = "MIT"
 readme = "README.md"
 authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 
-[dependencies]
+[workspace]
+members = [
+  "packages/cast",
+]
