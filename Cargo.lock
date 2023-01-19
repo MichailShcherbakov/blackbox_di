@@ -5,6 +5,9 @@ version = 3
 [[package]]
 name = "blackbox_di"
 version = "0.1.0"
+dependencies = [
+ "di",
+]
 
 [[package]]
 name = "cast"
@@ -36,7 +39,17 @@ name = "di"
 version = "0.1.0"
 dependencies = [
  "cast",
+ "di_codegen",
  "uuid",
+]
+
+[[package]]
+name = "di_codegen"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 [package]
-name = "di"
+name = "di_codegen"
 version = "0.1.0"
 edition = "2021"
 description = "Rust dependency injection library"
@@ -11,12 +11,9 @@ readme = "README.md"
 authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 
 [dependencies]
-uuid = { version = "1.2.2", features = ["v4", "fast-rng"] }
+proc-macro2 = "1.0.50"
+quote = "1.0.23"
+syn = { version = "1.0.107", features = [ "full", "extra-traits" ] }
 
-[dependencies.cast]
-path = "../cast"
-version = "0.1.0"
-
-[dependencies.di_codegen]
-path = "./packages/di_codegen"
-version = "0.1.0"
+[lib]
+proc-macro = true

@@ -2,13 +2,13 @@ use std::collections::{HashMap, HashSet};
 
 use crate::{
     instance_wrapper::{InstanceToken, InstanceWrapper},
-    link_mut::LinkMut,
     module::{Module, ModuleToken},
+    reference_mut::RefMut,
 };
 
 pub struct Container {
     pub global_modules_tokens: HashSet<ModuleToken>,
-    pub modules: HashMap<ModuleToken, LinkMut<Module>>,
+    pub modules: HashMap<ModuleToken, RefMut<Module>>,
 }
 
 impl Container {
@@ -19,13 +19,13 @@ impl Container {
         }
     }
 
-    pub fn register_module(&mut self, token: ModuleToken, module: LinkMut<Module>) -> &Self {
+    pub fn register_module(&mut self, token: ModuleToken, module: RefMut<Module>) -> &Self {
         self.modules.insert(token, module.clone());
 
         return self;
     }
 
-    pub fn register_global_module(&mut self, token: ModuleToken, module: LinkMut<Module>) -> &Self {
+    pub fn register_global_module(&mut self, token: ModuleToken, module: RefMut<Module>) -> &Self {
         self.register_module(token.clone(), module.clone());
         self.global_modules_tokens.insert(token);
         return self;
@@ -35,7 +35,7 @@ impl Container {
         self.modules.contains_key(token)
     }
 
-    pub fn get_module(&self, token: &ModuleToken) -> Option<LinkMut<Module>> {
+    pub fn get_module(&self, token: &ModuleToken) -> Option<RefMut<Module>> {
         if let Some(module) = self.modules.get(token) {
             Some(module.clone())
         } else {
@@ -43,14 +43,14 @@ impl Container {
         }
     }
 
-    pub fn get_modules(&self) -> HashMap<ModuleToken, LinkMut<Module>> {
+    pub fn get_modules(&self) -> HashMap<ModuleToken, RefMut<Module>> {
         self.modules
             .iter()
             .map(|(token, module)| (token.clone(), module.clone()))
             .collect::<HashMap<_, _>>()
     }
 
-    pub fn get_global_modules(&self) -> HashMap<ModuleToken, LinkMut<Module>> {
+    pub fn get_global_modules(&self) -> HashMap<ModuleToken, RefMut<Module>> {
         self.global_modules_tokens
             .iter()
             .map(|token| (token.clone(), self.get_module(token).unwrap()))
@@ -62,7 +62,7 @@ impl Container {
     /// Search steps:
     /// 1. looking for the provider in the module providers
     /// 2. looking for the provider in the global module exported providers
-    pub fn get_provider(&self, token: &InstanceToken) -> Option<LinkMut<InstanceWrapper>> {
+    pub fn get_provider(&self, token: &InstanceToken) -> Option<RefMut<InstanceWrapper>> {
         for (_module_token, module) in self.modules.iter() {
             if let Some(provider) = module.as_ref().get_provider(&token) {
                 return Some(provider);
@@ -88,8 +88,8 @@ impl Container {
     pub fn get_provider_in_module(
         &self,
         token: &InstanceToken,
-        root_module: LinkMut<Module>,
-    ) -> Option<LinkMut<InstanceWrapper>> {
+        root_module: RefMut<Module>,
+    ) -> Option<RefMut<InstanceWrapper>> {
         if let Some(provider) = root_module.as_ref().get_provider(&token) {
             return Some(provider.clone());
         }
@@ -117,12 +117,12 @@ impl Container {
         None
     }
 
-    pub fn get_modules_sorted_by_distance(&self) -> Vec<LinkMut<Module>> {
+    pub fn get_modules_sorted_by_distance(&self) -> Vec<RefMut<Module>> {
         let mut modules = self
             .get_modules()
             .iter()
             .map(|(_token, module)| module.clone())
-            .collect::<Vec<LinkMut<Module>>>();
+            .collect::<Vec<RefMut<Module>>>();
 
         modules.sort_by(|a, b| {
             b.as_ref()

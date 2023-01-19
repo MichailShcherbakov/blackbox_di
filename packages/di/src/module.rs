@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::{
     instance_wrapper::{InstanceToken, InstanceWrapper},
-    link_mut::LinkMut,
+    reference_mut::RefMut,
 };
 
 pub type ModuleId = String;
@@ -12,8 +12,8 @@ pub struct Module {
     id: ModuleId,
     token: ModuleToken,
     distance: u32,
-    related_modules: HashMap<ModuleToken, LinkMut<Module>>,
-    providers: HashMap<InstanceToken, LinkMut<InstanceWrapper>>,
+    related_modules: HashMap<ModuleToken, RefMut<Module>>,
+    providers: HashMap<InstanceToken, RefMut<InstanceWrapper>>,
     exported_providers_tokens: HashSet<InstanceToken>,
 }
 
@@ -45,14 +45,14 @@ impl Module {
         self.distance = value;
     }
 
-    pub fn register_related_module(&mut self, module: LinkMut<Module>) -> &Self {
+    pub fn register_related_module(&mut self, module: RefMut<Module>) -> &Self {
         self.related_modules
             .insert(module.as_ref().token.clone(), module.clone());
 
         return self;
     }
 
-    pub fn register_provider(&mut self, provider: LinkMut<InstanceWrapper>) -> &Self {
+    pub fn register_provider(&mut self, provider: RefMut<InstanceWrapper>) -> &Self {
         self.providers
             .insert(provider.as_ref().get_token().clone(), provider.clone());
 
@@ -72,28 +72,28 @@ impl Module {
         return self;
     }
 
-    pub fn get_related_modules(&self) -> HashMap<String, LinkMut<Module>> {
+    pub fn get_related_modules(&self) -> HashMap<String, RefMut<Module>> {
         self.related_modules
             .iter()
             .map(|(token, module)| (token.clone(), module.clone()))
             .collect::<HashMap<_, _>>()
     }
 
-    pub fn get_providers(&self) -> HashMap<String, LinkMut<InstanceWrapper>> {
+    pub fn get_providers(&self) -> HashMap<String, RefMut<InstanceWrapper>> {
         self.providers
             .iter()
             .map(|(token, provider)| (token.clone(), provider.clone()))
             .collect::<HashMap<_, _>>()
     }
 
-    pub fn get_exported_providers(&self) -> HashMap<String, LinkMut<InstanceWrapper>> {
+    pub fn get_exported_providers(&self) -> HashMap<String, RefMut<InstanceWrapper>> {
         self.exported_providers_tokens
             .iter()
             .map(|token| (token.clone(), self.get_provider(token).unwrap()))
             .collect::<HashMap<_, _>>()
     }
 
-    pub fn get_related_module(&self, token: &String) -> Option<LinkMut<Module>> {
+    pub fn get_related_module(&self, token: &String) -> Option<RefMut<Module>> {
         if let Some(module) = self.related_modules.get(token) {
             Some(module.clone())
         } else {
@@ -101,7 +101,7 @@ impl Module {
         }
     }
 
-    pub fn get_provider(&self, token: &String) -> Option<LinkMut<InstanceWrapper>> {
+    pub fn get_provider(&self, token: &String) -> Option<RefMut<InstanceWrapper>> {
         if let Some(provider) = self.providers.get(token) {
             Some(provider.clone())
         } else {
@@ -109,7 +109,7 @@ impl Module {
         }
     }
 
-    pub fn get_exported_provider(&self, token: &String) -> Option<LinkMut<InstanceWrapper>> {
+    pub fn get_exported_provider(&self, token: &String) -> Option<RefMut<InstanceWrapper>> {
         if let Some(found_token) = self.exported_providers_tokens.get(token) {
             self.get_provider(found_token)
         } else {

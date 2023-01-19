@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use cast::CastFrom;
 
-use crate::{link::Link, link_mut::LinkMut, module::Module};
+use crate::{module::Module, reference::Ref, reference_mut::RefMut};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Scope {
@@ -28,18 +28,18 @@ pub type InstanceWrapperId = String;
 pub type InquirerId = InstanceWrapperId;
 pub type InstanceToken = String;
 pub type ContextId = String;
-pub type Instance = Link<dyn IInjectable>;
+pub type Instance = Ref<dyn IInjectable>;
 
 pub struct InstanceWrapper {
     id: InstanceWrapperId,
     token: InstanceToken,
-    host: LinkMut<Module>,
+    host: RefMut<Module>,
     scope: Scope,
     instance_collection: HashMap<InquirerId, HashMap<ContextId, Instance>>,
 }
 
 impl InstanceWrapper {
-    pub fn new(token: InstanceToken, host: LinkMut<Module>) -> InstanceWrapper {
+    pub fn new(token: InstanceToken, host: RefMut<Module>) -> InstanceWrapper {
         InstanceWrapper {
             id: gen_instance_wrapper_id(),
             token,
@@ -57,7 +57,7 @@ impl InstanceWrapper {
         self.token.clone()
     }
 
-    pub fn get_host(&self) -> LinkMut<Module> {
+    pub fn get_host(&self) -> RefMut<Module> {
         self.host.clone()
     }
 

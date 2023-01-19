@@ -2,48 +2,48 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
 use syn::{parse::ParseStream, parse::Result, Attribute, Ident, Path, Token};
 
-static CAST_IDENT: &'static str = "cast";
-static LOCAL_CAST_IDENT: &'static str = "local";
+static BLACKBOX_DI_IDENT: &'static str = "blackbox_di";
+static LOCAL_BLACKBOX_DI_IDENT: &'static str = "local";
 
 /// Getting another path of the lib.
 ///                                 
 /// Default:
 ///
 /// ```rust
-/// // ::cast::cast
-/// #[cast]
-/// impl Trait for Structure {}
+/// // ::blackbox_di::interface
+/// #[interface]
+/// trait Trait {}
 /// ```
 ///
 /// Use local crate:
 /// ```rust
-/// // crate::cast
-/// #[cast]
-/// #[cast(crate)]
-/// impl Trait for Structure {}
+/// // crate::interface
+/// #[interface]
+/// #[blackbox_di(crate)]
+/// trait Trait {}
 /// ```
 ///
 /// Use global path:
 /// ```rust
-/// // path::to::cast::cast
-/// #[cast]
-/// #[cast(crate = path::to::cast)]
-/// impl Trait for Structure {}
+/// // path::to::blackbox_di::interface
+/// #[interface]
+/// #[blackbox_di(crate = path::to::blackbox_di)]
+/// trait Trait {}
 /// ```
 ///
 /// Use local path:
 /// ```rust
-/// // ::cast
-/// #[cast]
-/// #[cast(local]
-/// impl Trait for Structure {}
+/// // ::interface
+/// #[interface]
+/// #[blackbox_di(local)]
+/// trait Trait {}
 /// ```
 ///
-pub fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
+pub(crate) fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
     let mut path_to_lib: Option<TokenStream2> = None;
 
     attrs.retain(|attr| {
-        if !attr.path.is_ident(CAST_IDENT) {
+        if !attr.path.is_ident(BLACKBOX_DI_IDENT) {
             return true;
         }
 
@@ -60,7 +60,7 @@ pub fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
             path_to_lib = Some(quote::quote! { crate })
         } else if let Ok(ident) = attr.parse_args_with(|input: ParseStream| input.parse::<Ident>())
         {
-            if ident.to_string() == LOCAL_CAST_IDENT {
+            if ident.to_string() == LOCAL_BLACKBOX_DI_IDENT {
                 path_to_lib = Some(quote::quote! {})
             }
         }
@@ -68,5 +68,5 @@ pub fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
         return false;
     });
 
-    Ok(path_to_lib.unwrap_or_else(|| quote::quote! { cast }))
+    Ok(path_to_lib.unwrap_or_else(|| quote::quote! { blackbox_di }))
 }
