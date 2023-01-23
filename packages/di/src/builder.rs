@@ -201,13 +201,14 @@ impl ProviderBuilder {
     pub fn register_dependency<TSelf: Factory + CastFrom, TDep: ?Sized + CastFrom>(
         &self,
         token: String,
-        dep_init_fn: fn(Ref<TSelf>, Ref<TDep>) -> (),
+        dep_ref_fn: fn(Ref<TSelf>) -> Ref<TDep>,
     ) -> &Self {
         self.dep_init_fns.as_mut().insert(
             token,
             Box::new(
                 move |self_: Ref<dyn IInjectable>, dep: Ref<dyn IInjectable>| {
-                    (dep_init_fn)(self_.cast::<TSelf>().unwrap(), dep.cast::<TDep>().unwrap());
+                    (dep_ref_fn)(self_.cast::<TSelf>().unwrap())
+                        .__init(dep.cast::<TDep>().unwrap());
                 },
             ),
         );

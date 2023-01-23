@@ -56,7 +56,7 @@ pub(crate) fn gen_register_deps(provider: &Provider) -> Vec<TokenStream2> {
                 .token;
 
             quote::quote! {
-                register_dependency::<#provide_ident, #dep_path>(#token, |self_, dep| self_.#dep_ident.__init(dep))
+                register_dependency::<#provide_ident, #dep_path>(#token, |self_| self_.#dep_ident.clone())
             }
         })
         .collect::<Vec<_>>()

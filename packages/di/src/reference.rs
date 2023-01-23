@@ -6,13 +6,13 @@ use std::{
 
 use cast::{Cast, CastFrom, Error};
 
-pub(crate) enum RefValue<T> {
-    Initialized(T),
+pub enum RefValue<T: ?Sized> {
+    Initialized(Arc<T>),
     WaitingForValue,
 }
 
-pub struct Ref<T: ?Sized + CastFrom> {
-    value: Arc<Mutex<RefValue<Arc<T>>>>,
+pub struct Ref<T: ?Sized> {
+    value: Arc<Mutex<RefValue<T>>>,
 }
 
 unsafe impl<T: ?Sized + CastFrom> Sync for Ref<T> {}
@@ -46,7 +46,7 @@ impl<T: ?Sized + CastFrom> Ref<T> {
     }
 
     pub fn cast<S: ?Sized + CastFrom>(&self) -> Result<Ref<S>, Error> {
-        match self.as_ref().clone().cast::<S>() {
+        match self.as_ref().cast::<S>() {
             Ok(value) => Ok(Ref {
                 value: Arc::new(Mutex::new(RefValue::Initialized(value))),
             }),
@@ -54,7 +54,7 @@ impl<T: ?Sized + CastFrom> Ref<T> {
         }
     }
 
-    pub fn is<S: ?Sized + Any + Send + Send>(&self) -> bool {
+    pub fn is<S: ?Sized + Any + Sync + Send>(&self) -> bool {
         self.as_ref().clone().is::<S>()
     }
 }
@@ -65,7 +65,7 @@ impl<T: ?Sized + CastFrom> Deref for Ref<T> {
     fn deref(&self) -> &Self::Target {
         unsafe {
             if let RefValue::Initialized(value) =
-                &*(self.value.lock().unwrap().deref() as *const RefValue<Arc<T>>)
+                &*(self.value.lock().unwrap().deref() as *const RefValue<T>)
             {
                 value
             } else {

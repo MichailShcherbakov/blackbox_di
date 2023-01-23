@@ -7,7 +7,6 @@ use crate::{
     cell::RefMut,
     compiler::ModuleCompiler,
     container::Container,
-    factory::Factory,
     instance_wrapper::{InstanceToken, InstanceWrapper, Scope},
     module::{Module, ModuleId},
     reference::Ref,
