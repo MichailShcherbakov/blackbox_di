@@ -11,6 +11,7 @@ readme = "README.md"
 authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 
 [dependencies]
+tokio = { version = "1.2.0", features = ["rt", "rt-multi-thread", "macros", "signal"] }
 async-trait = "0.1.7"
 uuid = { version = "1.2.2", features = ["v4", "fast-rng"] }
 

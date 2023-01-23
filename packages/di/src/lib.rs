@@ -2,6 +2,7 @@ pub mod app;
 pub mod builder;
 pub mod compiler;
 pub mod container;
+pub mod events;
 pub mod factory;
 pub mod injectable;
 pub mod instance_wrapper;
@@ -17,6 +18,8 @@ pub mod cell {
     pub use crate::reference_mut::*;
 }
 
+pub use di_codegen::*;
+
 pub use async_trait;
 pub use cast;
-pub use di_codegen::*;
+pub use tokio;

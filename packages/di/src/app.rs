@@ -7,6 +7,7 @@ use crate::{
     cell::RefMut,
     compiler::ModuleCompiler,
     container::Container,
+    events::{OnModuleDestroy, OnModuleInit},
     instance_wrapper::{InstanceToken, InstanceWrapper, Scope},
     module::{Module, ModuleId},
     reference::Ref,
@@ -87,8 +88,10 @@ impl BlackBoxApp {
         }
     }
 
-    pub fn init(&self) -> &Self {
+    pub async fn init(&self) -> &Self {
         self.instance_links_host.as_mut().init();
+
+        self.call_init_hook().await;
 
         return self;
     }
@@ -129,6 +132,42 @@ impl BlackBoxApp {
             "InstanceLinksHost: {} provider was not found.",
             token
         ));
+    }
+
+    async fn call_init_hook(&self) {
+        let modules = self.container.as_ref().get_modules_sorted_by_distance();
+
+        for module in modules {
+            let providers = module.as_ref().get_providers();
+
+            for (_token, provider) in providers {
+                let instances = provider.as_ref().get_instances();
+
+                for instance in instances {
+                    if let Ok(provider) = instance.cast::<dyn OnModuleInit>() {
+                        provider.as_ref().on_module_init().await;
+                    }
+                }
+            }
+        }
+    }
+
+    async fn call_destroy_hook(&self) {
+        let modules = self.container.as_ref().get_modules_sorted_by_distance();
+
+        for module in modules {
+            let providers = module.as_ref().get_providers();
+
+            for (_token, provider) in providers {
+                let instances = provider.as_ref().get_instances();
+
+                for instance in instances {
+                    if let Ok(provider) = instance.cast::<dyn OnModuleDestroy>() {
+                        provider.as_ref().on_module_destroy().await;
+                    }
+                }
+            }
+        }
     }
 }
 
