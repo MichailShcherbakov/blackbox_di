@@ -1,9 +1,11 @@
+pub mod app;
 pub mod builder;
 pub mod compiler;
 pub mod container;
 pub mod factory;
 pub mod injectable;
 pub mod instance_wrapper;
+pub mod launch;
 pub mod lazy;
 pub mod module;
 mod reference;

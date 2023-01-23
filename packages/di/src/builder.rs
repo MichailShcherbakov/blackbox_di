@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use cast::CastFrom;
 
 use crate::{
+    app::BlackBoxApp,
     cell::{Ref, RefMut},
     container::Container,
     factory::Factory,
@@ -347,7 +348,11 @@ impl Builder {
         return module_builder;
     }
 
-    pub fn get_context(&self) -> RefMut<BuilderContext> {
-        self.context.clone()
+    pub fn get_modules(&self) -> HashMap<ModuleToken, Ref<ModuleBuilder>> {
+        self.context.as_ref().modules.clone()
+    }
+
+    pub fn build(&self) -> Ref<BlackBoxApp> {
+        Ref::new(BlackBoxApp::new(self.context.as_ref().container.clone()))
     }
 }

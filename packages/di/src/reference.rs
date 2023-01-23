@@ -12,7 +12,7 @@ pub(crate) enum RefValue<T> {
 }
 
 pub struct Ref<T: ?Sized + CastFrom> {
-    value: Mutex<RefValue<Arc<T>>>,
+    value: Arc<Mutex<RefValue<Arc<T>>>>,
 }
 
 unsafe impl<T: ?Sized + CastFrom> Sync for Ref<T> {}
@@ -21,7 +21,7 @@ unsafe impl<T: ?Sized + CastFrom> Send for Ref<T> {}
 impl<T: CastFrom> Ref<T> {
     pub fn new(value: T) -> Ref<T> {
         Ref {
-            value: Mutex::new(RefValue::Initialized(Arc::new(value))),
+            value: Arc::new(Mutex::new(RefValue::Initialized(Arc::new(value)))),
         }
     }
 }
@@ -31,24 +31,24 @@ impl<T: ?Sized + CastFrom> Ref<T> {
         if let RefValue::Initialized(value) = &*self.value.lock().unwrap() {
             value.clone()
         } else {
-            panic!("Ref: Ref value must be initialized before the first usage")
+            panic!("Ref: value must be initialized before the first usage")
         }
     }
 
     pub fn empty() -> Ref<T> {
         Ref {
-            value: Mutex::new(RefValue::WaitingForValue),
+            value: Arc::new(Mutex::new(RefValue::WaitingForValue)),
         }
     }
 
-    pub fn init<D: ?Sized + CastFrom>(&self, value: Ref<D>) {
+    pub fn __init<D: ?Sized + CastFrom>(&self, value: Ref<D>) {
         *self.value.lock().unwrap() = RefValue::Initialized(value.cast::<T>().unwrap().as_ref());
     }
 
     pub fn cast<S: ?Sized + CastFrom>(&self) -> Result<Ref<S>, Error> {
         match self.as_ref().clone().cast::<S>() {
             Ok(value) => Ok(Ref {
-                value: Mutex::new(RefValue::Initialized(value)),
+                value: Arc::new(Mutex::new(RefValue::Initialized(value))),
             }),
             Err(error) => Err(error),
         }
@@ -69,7 +69,7 @@ impl<T: ?Sized + CastFrom> Deref for Ref<T> {
             {
                 value
             } else {
-                panic!("Ref: Ref value must be initialized before the first usage")
+                panic!("Ref: value must be initialized before the first usage")
             }
         }
     }
@@ -78,7 +78,7 @@ impl<T: ?Sized + CastFrom> Deref for Ref<T> {
 impl<T: ?Sized + CastFrom> Clone for Ref<T> {
     fn clone(&self) -> Ref<T> {
         Ref {
-            value: Mutex::new(RefValue::Initialized(self.as_ref())),
+            value: self.value.clone(),
         }
     }
 }
