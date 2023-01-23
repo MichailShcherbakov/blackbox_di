@@ -15,24 +15,14 @@ static EXPORT_IDENT: &'static str = "export";
 
 pub(crate) struct ImportField {}
 pub(crate) struct ProviderField {
-    token: TokenStream2,
-    should_be_exported: bool,
-}
-
-impl ProviderField {
-    pub fn get_token(&self) -> &TokenStream2 {
-        &self.token
-    }
-
-    pub fn should_be_exported(&self) -> bool {
-        self.should_be_exported.clone()
-    }
+    pub token: TokenStream2,
+    pub should_be_exported: bool,
 }
 
 #[derive(Debug)]
 pub(crate) struct ModuleField {
-    ident: Ident,
-    path: TokenStream2,
+    pub ident: Ident,
+    pub path: TokenStream2,
     instance: Option<Box<dyn Any>>,
 }
 
@@ -43,14 +33,6 @@ impl ModuleField {
             path,
             instance: None,
         }
-    }
-
-    pub fn get_ident(&self) -> &Ident {
-        &self.ident
-    }
-
-    pub fn get_path(&self) -> &TokenStream2 {
-        &self.path
     }
 
     pub fn is<T: 'static>(&self) -> bool {
@@ -72,8 +54,8 @@ impl ModuleField {
 
 #[derive(Debug)]
 pub(crate) struct ModuleAttributes {
-    path_to_lib: TokenStream2,
-    is_module_global: bool,
+    pub path_to_lib: TokenStream2,
+    pub is_module_global: bool,
 }
 
 impl ModuleAttributes {
@@ -83,20 +65,12 @@ impl ModuleAttributes {
             is_module_global,
         }
     }
-
-    pub fn get_path_to_lib(&self) -> &TokenStream2 {
-        &self.path_to_lib
-    }
-
-    pub fn is_module_global(&self) -> bool {
-        self.is_module_global.clone()
-    }
 }
 
 #[derive(Debug)]
 pub(crate) struct Module {
-    fields: Vec<ModuleField>,
-    attrs: ModuleAttributes,
+    pub fields: Vec<ModuleField>,
+    pub attrs: ModuleAttributes,
     source: ItemStruct,
 }
 
@@ -107,14 +81,6 @@ impl Module {
 
     pub fn get_generics(&self) -> &Generics {
         &self.source.generics
-    }
-
-    pub fn get_fields(&self) -> &Vec<ModuleField> {
-        &self.fields
-    }
-
-    pub fn get_attrs(&self) -> &ModuleAttributes {
-        &self.attrs
     }
 
     pub fn to_token_stream(&self) -> TokenStream2 {

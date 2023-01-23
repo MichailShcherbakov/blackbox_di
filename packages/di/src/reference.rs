@@ -24,12 +24,6 @@ impl<T: CastFrom> Ref<T> {
             value: Mutex::new(RefValue::Initialized(Arc::new(value))),
         }
     }
-
-    pub fn empty() -> Ref<T> {
-        Ref {
-            value: Mutex::new(RefValue::WaitingForValue),
-        }
-    }
 }
 
 impl<T: ?Sized + CastFrom> Ref<T> {
@@ -40,11 +34,28 @@ impl<T: ?Sized + CastFrom> Ref<T> {
             panic!("Ref: Ref value must be initialized before the first usage")
         }
     }
-}
 
-impl<T: ?Sized + CastFrom> Ref<T> {
+    pub fn empty() -> Ref<T> {
+        Ref {
+            value: Mutex::new(RefValue::WaitingForValue),
+        }
+    }
+
     pub fn init<D: ?Sized + CastFrom>(&self, value: Ref<D>) {
         *self.value.lock().unwrap() = RefValue::Initialized(value.cast::<T>().unwrap().as_ref());
+    }
+
+    pub fn cast<S: ?Sized + CastFrom>(&self) -> Result<Ref<S>, Error> {
+        match self.as_ref().clone().cast::<S>() {
+            Ok(value) => Ok(Ref {
+                value: Mutex::new(RefValue::Initialized(value)),
+            }),
+            Err(error) => Err(error),
+        }
+    }
+
+    pub fn is<S: ?Sized + Any + Send + Send>(&self) -> bool {
+        self.as_ref().clone().is::<S>()
     }
 }
 
@@ -69,20 +80,5 @@ impl<T: ?Sized + CastFrom> Clone for Ref<T> {
         Ref {
             value: Mutex::new(RefValue::Initialized(self.as_ref())),
         }
-    }
-}
-
-impl<T: ?Sized + CastFrom> Ref<T> {
-    pub fn cast<S: ?Sized + CastFrom>(&self) -> Result<Ref<S>, Error> {
-        match self.as_ref().clone().cast::<S>() {
-            Ok(value) => Ok(Ref {
-                value: Mutex::new(RefValue::Initialized(value)),
-            }),
-            Err(error) => Err(error),
-        }
-    }
-
-    pub fn is<S: ?Sized + Any + Send + Send>(&self) -> bool {
-        self.as_ref().clone().is::<S>()
     }
 }

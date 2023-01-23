@@ -19,5 +19,5 @@ pub(crate) fn is_module_global(attrs: &mut Vec<Attribute>) -> Result<bool> {
 }
 
 pub(crate) fn compile_error<'a>(msg: &'a str) {
-    panic!("{}", msg);
+    panic!("CompilerError: {}", msg);
 }

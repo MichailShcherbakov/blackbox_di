@@ -7,11 +7,12 @@ use crate::{
 
 pub type ModuleId = String;
 pub type ModuleToken = String;
+pub type ModuleDistance = u32;
 
 pub struct Module {
     id: ModuleId,
     token: ModuleToken,
-    distance: u32,
+    distance: ModuleDistance,
     related_modules: HashMap<ModuleToken, RefMut<Module>>,
     providers: HashMap<InstanceToken, RefMut<InstanceWrapper>>,
     exported_providers_tokens: HashSet<InstanceToken>,
@@ -37,11 +38,11 @@ impl Module {
         self.token.clone()
     }
 
-    pub fn get_distance(&self) -> u32 {
+    pub fn get_distance(&self) -> ModuleDistance {
         self.distance.clone()
     }
 
-    pub fn set_distance(&mut self, value: u32) {
+    pub fn set_distance(&mut self, value: ModuleDistance) {
         self.distance = value;
     }
 

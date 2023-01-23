@@ -15,3 +15,7 @@ members = [
   "packages/cast",
   "packages/di",
 ]
+
+[dependencies.di]
+path = "packages/di"
+version = "0.1.0"

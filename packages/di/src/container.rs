@@ -31,6 +31,15 @@ impl Container {
         return self;
     }
 
+    pub fn register_global_module_by_token(&mut self, token: ModuleToken) -> &Self {
+        if !self.has_module(&token) {
+            return self;
+        }
+
+        self.global_modules_tokens.insert(token);
+        return self;
+    }
+
     pub fn has_module(&self, token: &ModuleToken) -> bool {
         self.modules.contains_key(token)
     }
@@ -110,6 +119,43 @@ impl Container {
             for (_token, module) in global_module.as_ref().get_related_modules().iter() {
                 if let Some(provider) = module.as_ref().get_exported_provider(&token) {
                     return Some(provider.clone());
+                }
+            }
+        }
+
+        None
+    }
+
+    /// Find module that has a provider with the token. Searching starts with root module
+    pub fn get_module_by_provider(
+        &self,
+        token: &InstanceToken,
+        root_module: RefMut<Module>,
+    ) -> Option<RefMut<Module>> {
+        if root_module.as_ref().get_provider(&token).is_some() {
+            return Some(root_module.clone());
+        }
+
+        for (_token, module) in root_module.as_ref().get_related_modules().iter() {
+            if module.as_ref().get_exported_provider(&token).is_some() {
+                return Some(module.clone());
+            }
+        }
+
+        for (_token, global_module) in self.get_global_modules().iter() {
+            if global_module
+                .as_ref()
+                .get_exported_provider(&token)
+                .is_some()
+            {
+                return Some(global_module.clone());
+            }
+        }
+
+        for (_token, global_module) in self.get_global_modules().iter() {
+            for (_token, module) in global_module.as_ref().get_related_modules().iter() {
+                if module.as_ref().get_exported_provider(&token).is_some() {
+                    return Some(module.clone());
                 }
             }
         }

@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 
-use cast::CastFrom;
-
-use crate::{module::Module, reference::Ref, reference_mut::RefMut};
+use crate::{
+    container::Container, injectable::IInjectable, module::Module, reference::Ref,
+    reference_mut::RefMut,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Scope {
@@ -20,15 +21,15 @@ impl Default for Scope {
     }
 }
 
-static STATIC_CONTEXT: &'static str = "STATIC_CONTEXT";
-
-pub trait IInjectable: CastFrom {}
+pub const STATIC_CONTEXT: &str = "STATIC_CONTEXT";
 
 pub type InstanceWrapperId = String;
 pub type InquirerId = InstanceWrapperId;
 pub type InstanceToken = String;
 pub type ContextId = String;
 pub type Instance = Ref<dyn IInjectable>;
+pub type FactoryFn =
+    fn(token: InstanceToken, module: RefMut<Module>, container: RefMut<Container>) -> Instance;
 
 pub struct InstanceWrapper {
     id: InstanceWrapperId,
@@ -65,6 +66,10 @@ impl InstanceWrapper {
         self.scope.clone()
     }
 
+    pub fn set_scope(&mut self, scope: Scope) {
+        self.scope = scope;
+    }
+
     pub fn has_instance(&self) -> bool {
         self.get_instance().is_some()
     }
@@ -75,6 +80,22 @@ impl InstanceWrapper {
             STATIC_CONTEXT.to_string(),
             instance,
         )
+    }
+
+    pub fn get_instances(&self) -> Vec<Instance> {
+        let mut instances: Vec<Instance> = Vec::new();
+
+        self.instance_collection
+            .iter()
+            .for_each(|(_inquirer_id, inquirer_instances)| {
+                inquirer_instances
+                    .iter()
+                    .for_each(|(_context_id, instance)| {
+                        instances.push(instance.clone());
+                    })
+            });
+
+        return instances;
     }
 
     pub fn get_instance(&self) -> Option<Instance> {
@@ -110,6 +131,15 @@ impl InstanceWrapper {
         } else {
             None
         }
+    }
+
+    pub fn has_instance_by_inquirer_id(
+        &self,
+        inquirer_id: &InquirerId,
+        context_id: &ContextId,
+    ) -> bool {
+        self.get_instance_by_inquirer_id(inquirer_id, context_id)
+            .is_some()
     }
 
     pub fn set_instance_by_context_id(&mut self, context_id: ContextId, instance: Instance) {
