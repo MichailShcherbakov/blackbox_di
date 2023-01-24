@@ -10,8 +10,10 @@ use crate::{
     events::{OnModuleDestroy, OnModuleInit},
     instance_wrapper::{InstanceToken, InstanceWrapper, Scope},
     module::{Module, ModuleId},
+    modules::CoreModule,
     reference::Ref,
     tokens::get_token,
+    ILogger, Logger,
 };
 
 #[derive(Clone)]
@@ -82,15 +84,17 @@ pub struct BlackBoxApp {
 
 impl BlackBoxApp {
     pub fn new(container: RefMut<Container>) -> BlackBoxApp {
+        let instance_links_host = RefMut::new(InstanceLinksHost::new(container.clone()));
+
+        instance_links_host.as_mut().init();
+
         BlackBoxApp {
-            container: container.clone(),
-            instance_links_host: RefMut::new(InstanceLinksHost::new(container)),
+            container,
+            instance_links_host,
         }
     }
 
     pub async fn init(&self) -> &Self {
-        self.instance_links_host.as_mut().init();
-
         self.call_init_hook().await;
 
         return self;
@@ -114,11 +118,6 @@ impl BlackBoxApp {
 
         for instance_link in instance_links {
             let wrapper = instance_link.wrapper_ref.clone();
-            let scope = wrapper.as_ref().get_scope();
-
-            if scope == Scope::Transient || scope == Scope::ContextDependent {
-                return Err(format!("InstanceLinksHost: {} is marked as a scoped provider. Context depend and transient-scoped providers can't be used in combination with `get()` method.", token));
-            }
 
             return Ok(wrapper
                 .as_ref()
@@ -169,10 +168,36 @@ impl BlackBoxApp {
             }
         }
     }
+
+    pub fn use_logger(&self, logger: Ref<dyn ILogger>) {
+        let default_logger = self.get::<Logger>().unwrap();
+
+        default_logger.as_ref().register_logger(logger);
+        default_logger.as_ref().flush();
+    }
 }
 
-pub fn build<TModule: ModuleCompiler>() -> Ref<BlackBoxApp> {
+pub struct BuildParams {
+    buffer_logs: bool,
+}
+
+impl BuildParams {
+    pub fn default() -> BuildParams {
+        BuildParams { buffer_logs: false }
+    }
+
+    pub fn buffer_logs(mut self) -> Self {
+        self.buffer_logs = true;
+
+        return self;
+    }
+}
+
+pub async fn build<TModule: ModuleCompiler>(params: BuildParams) -> Ref<BlackBoxApp> {
     let builder = RefMut::new(Builder::new());
+
+    let core_module_builder = builder.as_mut().register_module::<CoreModule>();
+    CoreModule::__blackbox_build(core_module_builder);
 
     let root_module_builder = builder.as_mut().register_module::<TModule>();
     TModule::__blackbox_build(root_module_builder);
@@ -180,7 +205,34 @@ pub fn build<TModule: ModuleCompiler>() -> Ref<BlackBoxApp> {
     init(builder.clone());
     link(builder.clone());
 
-    return builder.as_ref().build();
+    let raw_container = builder.as_ref().get_raw_container();
+    let mut modules = raw_container.as_ref().get_modules_sorted_by_distance();
+
+    modules.reverse();
+
+    let app = builder.as_ref().build();
+
+    let logger = app.get::<Logger>().unwrap();
+
+    if params.buffer_logs {
+        logger.attach_buffer();
+    }
+
+    for module in modules {
+        let token = module.as_ref().get_token();
+
+        // skip core modules
+        if token.starts_with("di::") {
+            continue;
+        }
+
+        logger.info_with_ctx(
+            format!("{} dependencies initialized", token).as_str(),
+            "ModuleLoader",
+        )
+    }
+
+    return app;
 }
 
 fn init(builder: RefMut<Builder>) {

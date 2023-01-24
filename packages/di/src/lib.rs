@@ -9,6 +9,7 @@ pub mod instance_wrapper;
 pub mod launch;
 pub mod lazy;
 pub mod module;
+pub mod modules;
 mod reference;
 mod reference_mut;
 pub mod tokens;
@@ -17,6 +18,8 @@ pub mod cell {
     pub use crate::reference::*;
     pub use crate::reference_mut::*;
 }
+
+pub use modules::logger::*;
 
 pub use di_codegen::*;
 

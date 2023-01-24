@@ -353,6 +353,10 @@ impl Builder {
         self.context.as_ref().modules.clone()
     }
 
+    pub fn get_raw_container(&self) -> RefMut<Container> {
+        self.context.as_ref().container.clone()
+    }
+
     pub fn build(&self) -> Ref<BlackBoxApp> {
         Ref::new(BlackBoxApp::new(self.context.as_ref().container.clone()))
     }
