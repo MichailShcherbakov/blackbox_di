@@ -1,4 +1,4 @@
-use cast::CastFrom;
+use blackbox_cast::CastFrom;
 
 use crate::reference::Ref;
 

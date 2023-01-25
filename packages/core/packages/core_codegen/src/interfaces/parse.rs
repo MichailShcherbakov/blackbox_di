@@ -30,7 +30,7 @@ impl Interface {
 
         quote::quote! {
             #[#path_to_lib::async_trait::async_trait]
-            #vis #trait_token #ident #generics: #path_to_lib::cast::CastFrom + #supertraits {
+            #vis #trait_token #ident #generics: #path_to_lib::blackbox_cast::CastFrom + #supertraits {
                 #(#items)*
             }
         }

@@ -68,5 +68,5 @@ pub fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
         return false;
     });
 
-    Ok(path_to_lib.unwrap_or_else(|| quote::quote! { cast }))
+    Ok(path_to_lib.unwrap_or_else(|| quote::quote! { blackbox_cast }))
 }

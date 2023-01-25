@@ -1,14 +1,14 @@
 [package]
-name = "cast_codegen"
+name = "blackbox_cast_codegen"
 version = "0.1.0"
 edition = "2021"
 description = "Trait cast library"
-keywords = [ "blackbox", "blackbox_di", "blackbox_di_cast", "cast_codegen", "codegen", "traitcast", "upcast", "trait", "cast"]
+keywords = [ "blackbox", "blackbox_di", "blackbox_cast", "trait", "cast"]
 repository = "https://github.com/MichailShcherbakov/blackbox_di"
 homepage = "https://github.com/MichailShcherbakov/blackbox_di"
 license = "MIT"
-readme = "README.md"
-authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
+readme = "../../../../README.md"
+authors = [ "MichailShcherbakov <MichailShcherbakov@gmail.com>" ]
 
 [dependencies]
 proc-macro2 = "1.0.50"

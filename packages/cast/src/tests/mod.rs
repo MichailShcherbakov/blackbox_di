@@ -1,6 +1,10 @@
-use crate::{Cast, CastFrom};
-use cast_codegen::cast;
+#![allow(unused)]
+
 use std::sync::Arc;
+
+use crate::cast;
+use crate::Cast;
+use crate::CastFrom;
 
 trait Injectable: CastFrom {}
 trait IService: CastFrom {}

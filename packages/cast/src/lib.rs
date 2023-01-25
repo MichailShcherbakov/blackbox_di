@@ -5,8 +5,9 @@ mod error;
 mod tests;
 mod vtable;
 
+pub use blackbox_cast_codegen::cast;
+
 pub use cast::Cast;
-pub use cast_codegen::cast;
 pub use cast_from::CastFrom;
 pub use caster::Caster;
 pub use error::Error;

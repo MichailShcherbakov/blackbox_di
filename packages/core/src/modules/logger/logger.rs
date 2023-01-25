@@ -1,4 +1,4 @@
-use di_codegen::{implements, injectable};
+use crate::{implements, injectable};
 
 use crate::{cell::RefMut, reference::Ref};
 

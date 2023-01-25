@@ -1,4 +1,4 @@
-use di_codegen::interface;
+use crate::interface;
 
 #[interface]
 #[blackbox_di(local)]

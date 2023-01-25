@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use cast::CastFrom;
+use blackbox_cast::CastFrom;
 
 use crate::{
     app::BlackBoxApp,

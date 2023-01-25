@@ -1,4 +1,4 @@
-# Blackbox DI
+# BlackBox DI
 
 Dependency injection for Rust
 
@@ -446,4 +446,7 @@ let custom_logger = app.get::<CustomLogger>().unwrap();
 app.use_logger(custom_logger.cast::<dyn ILogger>().unwrap());
 ```
 
+## License
+BlackBox DI is licensed under:
 
+- MIT License (LICENSE-MIT or https://opensource.org/licenses/MIT)

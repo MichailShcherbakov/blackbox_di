@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "async-trait"
-version = "0.1.62"
+version = "0.1.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "689894c2db1ea643a50834b999abf1c110887402542955ff5451dab8f861f9ed"
+checksum = "eff18d764974428cf3a9328e23fc5c986f5fbed46e6cd4cdf42544df5d297ec1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -40,29 +40,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
-name = "blackbox_di"
+name = "blackbox_cast"
 version = "0.1.0"
 dependencies = [
- "cast",
-]
-
-[[package]]
-name = "bumpalo"
-version = "3.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d261e256854913907f67ed06efbc3338dfe6179796deefc1ff763fc1aee5535"
-
-[[package]]
-name = "cast"
-version = "0.1.0"
-dependencies = [
- "cast_codegen",
+ "blackbox_cast_codegen",
  "linkme",
  "once_cell",
 ]
 
 [[package]]
-name = "cast_codegen"
+name = "blackbox_cast_codegen"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
@@ -70,6 +57,42 @@ dependencies = [
  "syn",
  "uuid",
 ]
+
+[[package]]
+name = "blackbox_core"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "blackbox_cast",
+ "blackbox_core_codegen",
+ "chrono",
+ "colored",
+ "once_cell",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
+name = "blackbox_core_codegen"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "blackbox_di"
+version = "0.1.0"
+dependencies = [
+ "blackbox_core",
+]
+
+[[package]]
+name = "bumpalo"
+version = "3.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d261e256854913907f67ed06efbc3338dfe6179796deefc1ff763fc1aee5535"
 
 [[package]]
 name = "cc"
@@ -163,29 +186,6 @@ name = "cxxbridge-macro"
 version = "1.0.87"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "65e07508b90551e610910fa648a1878991d367064997a596135b86df30daf07e"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "di"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "cast",
- "chrono",
- "colored",
- "di_codegen",
- "once_cell",
- "tokio",
- "uuid",
-]
-
-[[package]]
-name = "di_codegen"
-version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",

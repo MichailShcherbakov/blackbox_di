@@ -1,0 +1,23 @@
+[package]
+name = "blackbox_core"
+version = "0.1.0"
+edition = "2021"
+description = "Rust dependency injection library"
+keywords = [ "blackbox_di", "dependency-injection", "inversion-of-control", "di", "ioc"]
+repository = "https://github.com/MichailShcherbakov/blackbox_di"
+homepage = "https://github.com/MichailShcherbakov/blackbox_di"
+license = "MIT"
+readme = "../../README.md"
+authors = [ "MichailShcherbakov <MichailShcherbakov@gmail.com>" ]
+
+[dependencies]
+blackbox_core_codegen = { path = "./packages/core_codegen", version = "0.1.0" } 
+blackbox_cast = { path = "../cast", version = "0.1.0" }
+
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros", "signal"] }
+async-trait = "0.1"
+uuid = { version = "1.2", features = ["v4", "fast-rng"] }
+colored = "2.0" 
+chrono = "0.4" 
+once_cell = "1.17" 
+

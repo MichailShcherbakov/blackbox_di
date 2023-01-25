@@ -20,8 +20,9 @@ pub mod cell {
 
 pub use modules::logger::*;
 
-pub use di_codegen::*;
+pub use blackbox_core_codegen::*;
+
+pub use blackbox_cast;
 
 pub use async_trait;
-pub use cast;
 pub use tokio;

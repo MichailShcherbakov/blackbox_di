@@ -4,7 +4,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use cast::{Cast, CastFrom, Error};
+use blackbox_cast::{Cast, CastFrom, Error};
 
 pub enum RefValue<T: ?Sized> {
     Initialized(Arc<T>),

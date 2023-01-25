@@ -56,8 +56,8 @@ pub fn implements(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
         result.extend(quote::quote! {
             #[#path_to_lib::async_trait::async_trait]
-            #[#path_to_lib::cast::cast]
-            #[cast(crate = #path_to_lib::cast)]
+            #[#path_to_lib::blackbox_cast::cast]
+            #[cast(crate = #path_to_lib::blackbox_cast)]
             #item
         });
 

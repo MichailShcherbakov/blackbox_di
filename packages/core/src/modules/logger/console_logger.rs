@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
+use crate::implements;
 use colored::{ColoredString, Colorize};
-use di_codegen::implements;
 use once_cell::sync::Lazy;
 
 use crate::cell::RefMut;

@@ -1,8 +1,8 @@
-use di_codegen::implements;
+use crate::{implements, injectable};
 
 use crate::{
     cell::{Ref, RefMut},
-    injectable, ILogger,
+    ILogger,
 };
 
 use super::{console_logger::ConsoleLogger, level::LogLevel};

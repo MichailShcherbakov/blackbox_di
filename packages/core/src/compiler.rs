@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use cast::*;
+use blackbox_cast::*;
 
 use crate::{
     builder::{ModuleBuilder, ProviderBuilder},
