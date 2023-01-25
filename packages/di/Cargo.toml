@@ -11,12 +11,12 @@ readme = "README.md"
 authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 
 [dependencies]
-tokio = { version = "1.2.0", features = ["rt", "rt-multi-thread", "macros", "signal"] }
-async-trait = "0.1.7"
-uuid = { version = "1.2.2", features = ["v4", "fast-rng"] }
-colored = { version = "2.0.0" }
-chrono = { version = "0.4.23" }
-once_cell = { version = "1.17.0" }
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros", "signal"] }
+async-trait = "0.1"
+uuid = { version = "1.2", features = ["v4", "fast-rng"] }
+colored = { version = "2.0" }
+chrono = { version = "0.4" }
+once_cell = { version = "1.17" }
 
 [dependencies.cast]
 path = "../cast"

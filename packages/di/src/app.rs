@@ -8,7 +8,7 @@ use crate::{
     compiler::ModuleCompiler,
     container::Container,
     events::{OnModuleDestroy, OnModuleInit},
-    instance_wrapper::{InstanceToken, InstanceWrapper, Scope},
+    instance_wrapper::{InstanceToken, InstanceWrapper},
     module::{Module, ModuleId},
     modules::CoreModule,
     reference::Ref,
@@ -94,10 +94,8 @@ impl BlackBoxApp {
         }
     }
 
-    pub async fn init(&self) -> &Self {
-        self.call_init_hook().await;
-
-        return self;
+    pub fn get_container(&self) -> RefMut<Container> {
+        self.container.clone()
     }
 
     /// Retrieves an instance of either injectable, otherwise, throws error.
@@ -131,42 +129,6 @@ impl BlackBoxApp {
             "InstanceLinksHost: {} provider was not found.",
             token
         ));
-    }
-
-    async fn call_init_hook(&self) {
-        let modules = self.container.as_ref().get_modules_sorted_by_distance();
-
-        for module in modules {
-            let providers = module.as_ref().get_providers();
-
-            for (_token, provider) in providers {
-                let instances = provider.as_ref().get_instances();
-
-                for instance in instances {
-                    if let Ok(provider) = instance.cast::<dyn OnModuleInit>() {
-                        provider.as_ref().on_module_init().await;
-                    }
-                }
-            }
-        }
-    }
-
-    async fn call_destroy_hook(&self) {
-        let modules = self.container.as_ref().get_modules_sorted_by_distance();
-
-        for module in modules {
-            let providers = module.as_ref().get_providers();
-
-            for (_token, provider) in providers {
-                let instances = provider.as_ref().get_instances();
-
-                for instance in instances {
-                    if let Ok(provider) = instance.cast::<dyn OnModuleDestroy>() {
-                        provider.as_ref().on_module_destroy().await;
-                    }
-                }
-            }
-        }
     }
 
     pub fn use_logger(&self, logger: Ref<dyn ILogger>) {
@@ -205,12 +167,12 @@ pub async fn build<TModule: ModuleCompiler>(params: BuildParams) -> Ref<BlackBox
     init(builder.clone());
     link(builder.clone());
 
-    let raw_container = builder.as_ref().get_raw_container();
-    let mut modules = raw_container.as_ref().get_modules_sorted_by_distance();
+    let app = builder.as_ref().build();
+
+    let container = app.as_ref().get_container();
+    let mut modules = container.as_ref().get_modules_sorted_by_distance();
 
     modules.reverse();
-
-    let app = builder.as_ref().build();
 
     let logger = app.get::<Logger>().unwrap();
 
@@ -231,6 +193,10 @@ pub async fn build<TModule: ModuleCompiler>(params: BuildParams) -> Ref<BlackBox
             "ModuleLoader",
         )
     }
+
+    listen_exit_signal(app.clone());
+
+    call_init_hook(app.clone()).await;
 
     return app;
 }
@@ -272,4 +238,54 @@ fn link(builder: RefMut<Builder>) {
             }
         }
     }
+}
+
+async fn call_init_hook(app: Ref<BlackBoxApp>) {
+    let modules = app
+        .get_container()
+        .as_ref()
+        .get_modules_sorted_by_distance();
+
+    for module in modules {
+        let providers = module.as_ref().get_providers();
+
+        for (_token, provider) in providers {
+            let instances = provider.as_ref().get_instances();
+
+            for instance in instances {
+                if let Ok(provider) = instance.cast::<dyn OnModuleInit>() {
+                    provider.as_ref().on_module_init().await;
+                }
+            }
+        }
+    }
+}
+
+async fn call_destroy_hook(app: Ref<BlackBoxApp>) {
+    let modules = app
+        .get_container()
+        .as_ref()
+        .get_modules_sorted_by_distance();
+
+    for module in modules {
+        let providers = module.as_ref().get_providers();
+
+        for (_token, provider) in providers {
+            let instances = provider.as_ref().get_instances();
+
+            for instance in instances {
+                if let Ok(provider) = instance.cast::<dyn OnModuleDestroy>() {
+                    provider.as_ref().on_module_destroy().await;
+                }
+            }
+        }
+    }
+}
+
+fn listen_exit_signal(app: Ref<BlackBoxApp>) {
+    tokio::spawn(async move {
+        tokio::signal::ctrl_c().await.unwrap();
+
+        call_destroy_hook(app).await;
+    });
 }

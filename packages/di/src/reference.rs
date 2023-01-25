@@ -15,8 +15,8 @@ pub struct Ref<T: ?Sized> {
     value: Arc<Mutex<RefValue<T>>>,
 }
 
-unsafe impl<T: ?Sized + CastFrom> Sync for Ref<T> {}
-unsafe impl<T: ?Sized + CastFrom> Send for Ref<T> {}
+unsafe impl<T: ?Sized> Sync for Ref<T> {}
+unsafe impl<T: ?Sized> Send for Ref<T> {}
 
 impl<T: CastFrom> Ref<T> {
     pub fn new(value: T) -> Ref<T> {

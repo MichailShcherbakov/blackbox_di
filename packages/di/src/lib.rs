@@ -6,7 +6,6 @@ pub mod events;
 pub mod factory;
 pub mod injectable;
 pub mod instance_wrapper;
-pub mod launch;
 pub mod lazy;
 pub mod module;
 pub mod modules;

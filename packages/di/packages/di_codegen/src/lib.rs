@@ -9,7 +9,6 @@ use modules::{gen_module_compiler, parse_module};
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use providers::{gen_factory_code, gen_provider_compiler, parse_provider};
-use quote::ToTokens;
 use syn::{parse, ItemFn};
 
 #[proc_macro_attribute]
@@ -80,12 +79,12 @@ pub fn launch(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let path_to_lib = get_path_to_lib(&mut fn_.attrs).unwrap();
 
-    let mut result = TokenStream2::from(fn_.to_token_stream());
+    let mut result = TokenStream2::new();
 
     let block_ = fn_.block;
 
     result.extend(quote::quote! {
-         fn main() {
+        fn main() {
             #path_to_lib::tokio::runtime::Builder::new_multi_thread()
                 .enable_all()
                 .build()
