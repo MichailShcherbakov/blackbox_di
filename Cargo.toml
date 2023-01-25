@@ -12,10 +12,9 @@ authors = [ "50011226+MichailShcherbakov@users.noreply.github.com" ]
 
 [workspace]
 members = [
-  "packages/cast",
-  "packages/di",
+  "packages/*",
 ]
 
-[dependencies.di]
-path = "packages/di"
+[dependencies.cast]
+path = "packages/cast"
 version = "0.1.0"
