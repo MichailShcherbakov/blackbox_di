@@ -41,7 +41,7 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
 name = "blackbox_cast"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blackbox_cast_codegen",
  "linkme",
@@ -50,7 +50,7 @@ dependencies = [
 
 [[package]]
 name = "blackbox_cast_codegen"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -60,7 +60,7 @@ dependencies = [
 
 [[package]]
 name = "blackbox_core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-trait",
  "blackbox_cast",
@@ -74,7 +74,7 @@ dependencies = [
 
 [[package]]
 name = "blackbox_core_codegen"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -83,7 +83,7 @@ dependencies = [
 
 [[package]]
 name = "blackbox_di"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blackbox_core",
 ]

@@ -1,6 +1,6 @@
 [package]
 name = "blackbox_cast"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Trait cast library"
 keywords = [ "blackbox", "blackbox_di", "blackbox_cast", "trait", "cast"]
@@ -11,6 +11,6 @@ readme = "../../README.md"
 authors = [ "MichailShcherbakov <MichailShcherbakov@gmail.com>" ]
 
 [dependencies]
-blackbox_cast_codegen = { path = "./packages/cast_codegen", version = "0.1.0" }
+blackbox_cast_codegen = { path = "./packages/cast_codegen", version = "0.1.1" }
 once_cell = "1.17.0"
 linkme = "0.3.7"

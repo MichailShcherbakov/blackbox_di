@@ -1,6 +1,6 @@
 [package]
 name = "blackbox_cast_codegen"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Trait cast library"
 keywords = [ "blackbox", "blackbox_di", "blackbox_cast", "trait", "cast"]
