@@ -15,8 +15,8 @@ use super::{
     scope::{get_scope, Scope},
 };
 
-static INJECT_IDENT: &'static str = "inject";
-static FACTORY_IDENT: &'static str = "factory";
+const INJECT_IDENT: &str = "inject";
+const FACTORY_IDENT: &str = "factory";
 
 #[derive(Debug)]
 pub struct ProviderAttributes {
@@ -146,7 +146,7 @@ fn parse_provider_deps_by_struct(
                     return true;
                 }
 
-                let provider_path = get_ref_path(&dep_path).unwrap();
+                let provider_path = get_ref_path(&dep_path, &attrs.path_to_lib).unwrap();
 
                 let mut inject = Inject::new(quote::quote! {
                     #path_to_lib::tokens::get_token::<#provider_path>()

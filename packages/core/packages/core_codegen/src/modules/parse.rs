@@ -9,9 +9,9 @@ use crate::helpers::{get_lazy_path, get_path_from_type, get_path_to_lib, get_ref
 
 use super::helpers::{compile_error, is_module_global};
 
-static IMPORT_IDENT: &'static str = "import";
-static PROVIDER_IDENT: &'static str = "provider";
-static EXPORT_IDENT: &'static str = "export";
+const IMPORT_IDENT: &str = "import";
+const PROVIDER_IDENT: &str = "provider";
+const EXPORT_IDENT: &str = "export";
 
 pub(crate) struct ImportField {}
 pub(crate) struct ProviderField {
@@ -115,7 +115,10 @@ fn parse_module_field(field: &mut Field, attrs: &ModuleAttributes) -> Result<Mod
     let field_ident = field.ident.clone().unwrap();
     let field_path = get_path_from_type(&field.ty).unwrap();
 
-    let mut module_field = ModuleField::new(field_ident.clone(), get_lazy_path(&field_path)?);
+    let mut module_field = ModuleField::new(
+        field_ident.clone(),
+        get_lazy_path(&field_path, &attrs.path_to_lib)?,
+    );
 
     let path_to_lib = &attrs.path_to_lib;
 
@@ -142,7 +145,7 @@ fn parse_module_field(field: &mut Field, attrs: &ModuleAttributes) -> Result<Mod
                     compile_error("The #[provider] must be specified only once");
                 }
             } else {
-                let provider_path = get_ref_path(&field_path).unwrap();
+                let provider_path = get_ref_path(&field_path, &attrs.path_to_lib).unwrap();
 
                 let mut token = quote::quote! {
                     #path_to_lib::tokens::get_token::<#provider_path>()

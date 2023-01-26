@@ -2,8 +2,8 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
 use syn::{parse::ParseStream, parse::Result, Attribute, Ident, Path, Token};
 
-static CAST_IDENT: &'static str = "cast";
-static LOCAL_CAST_IDENT: &'static str = "local";
+const CAST_IDENT: &str = "cast";
+const LOCAL_CAST_IDENT: &str = "local";
 
 /// Getting another path of the lib.
 ///                                 
@@ -38,8 +38,7 @@ static LOCAL_CAST_IDENT: &'static str = "local";
 /// #[cast(local]
 /// impl Trait for Structure {}
 /// ```
-///
-pub fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
+pub(crate) fn get_path_to_lib(attrs: &mut Vec<Attribute>) -> Result<TokenStream2> {
     let mut path_to_lib: Option<TokenStream2> = None;
 
     attrs.retain(|attr| {

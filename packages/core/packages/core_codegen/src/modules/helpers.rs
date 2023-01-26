@@ -1,6 +1,6 @@
 use syn::{parse::Result, Attribute};
 
-static GLOBAL_MODULE_IDENT: &'static str = "global";
+const GLOBAL_MODULE_IDENT: &str = "global";
 
 pub(crate) fn is_module_global(attrs: &mut Vec<Attribute>) -> Result<bool> {
     let mut is_module_global = false;

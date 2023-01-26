@@ -29,7 +29,7 @@ pub(crate) fn gen_inject_dep_code(
     dep: &ProviderDependency,
     attrs: &ProviderAttributes,
 ) -> TokenStream2 {
-    let ref_path = get_ref_path(&dep.path).unwrap();
+    let ref_path = get_ref_path(&dep.path, &attrs.path_to_lib).unwrap();
     let ident = gen_dep_ident(uident);
     let path_to_lib = &attrs.path_to_lib;
 
@@ -40,6 +40,7 @@ pub(crate) fn gen_inject_dep_code(
 
 pub(crate) fn gen_register_deps(provider: &Provider) -> Vec<TokenStream2> {
     let provide_ident = &provider.ident;
+    let path_to_lib = &provider.attrs.path_to_lib;
 
     provider
         .deps
@@ -47,7 +48,7 @@ pub(crate) fn gen_register_deps(provider: &Provider) -> Vec<TokenStream2> {
         .iter()
         .map(|dep| {
             let dep_ident = &dep.ident;
-            let dep_path = get_ref_path(&dep.path).unwrap();
+            let dep_path = get_ref_path(&dep.path, path_to_lib).unwrap();
 
             let token = &dep
                 .inject

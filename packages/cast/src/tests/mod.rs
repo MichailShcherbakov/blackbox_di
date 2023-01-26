@@ -22,8 +22,8 @@ impl IService for Service {}
 #[test]
 fn cast_to_traits() {
     let service = Arc::new(Service {});
-    let _injectable = service.clone().cast::<dyn Injectable>().unwrap();
-    let _interface = service.clone().cast::<dyn IService>().unwrap();
+    let injectable = service.clone().cast::<dyn Injectable>().unwrap();
+    let interface = service.clone().cast::<dyn IService>().unwrap();
 }
 
 #[test]
@@ -32,5 +32,5 @@ fn cast_traits_among_themselves() {
     let injectable_1 = service.cast::<dyn Injectable>().unwrap();
     let interface = injectable_1.cast::<dyn IService>().unwrap();
     let interface_2 = interface.cast::<dyn Injectable>().unwrap();
-    let _initial_service = interface_2.cast::<Service>().unwrap();
+    let initial_service = interface_2.cast::<Service>().unwrap();
 }

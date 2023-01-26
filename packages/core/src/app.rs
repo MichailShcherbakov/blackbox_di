@@ -184,7 +184,7 @@ pub async fn build<TModule: ModuleCompiler>(params: BuildParams) -> Ref<BlackBox
         let token = module.as_ref().get_token();
 
         // skip core modules
-        if token.starts_with("di::") {
+        if token.starts_with("blackbox_core::") {
             continue;
         }
 

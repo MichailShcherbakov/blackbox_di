@@ -2,8 +2,8 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
 use syn::{parse::ParseStream, parse::Result, Attribute, Ident, Path, Token};
 
-static BLACKBOX_DI_IDENT: &'static str = "blackbox_di";
-static LOCAL_BLACKBOX_DI_IDENT: &'static str = "local";
+const BLACKBOX_DI_IDENT: &str = "blackbox_di";
+const LOCAL_BLACKBOX_DI_IDENT: &str = "local";
 
 /// Getting another path of the lib.
 ///                                 
